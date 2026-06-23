@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="theme-color" content="#0C0908"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Tablero de Negocio — Bianca Aldama · 3 Sucursales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --rose:#C99A7A;--rose-l:#E8C9B0;--rose-d:#8B6952;
+  --bg:#0C0908;--bg-2:#141110;--bg-3:#1C1714;--line:#2A2320;
+  --red:#E8736A;--green:#7AB89A;--amber:#E0B25C;--blue:#7FA8C9;
+  --txt:#EDE7E2;--dim:#9B8F86;
+  --accent:#C99A7A;--accent-l:#E8C9B0;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{padding:28px 0 0;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(12,9,8,.9);backdrop-filter:blur(16px);z-index:50}
+.head-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;padding-bottom:22px}
+.head-logo{height:42px;width:auto;filter:drop-shadow(0 0 20px rgba(201,154,122,.2))}
+.head-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--rose-l);letter-spacing:.02em}
+.head-sub{font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);margin-top:3px}
+.head-badge{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);border:1px solid rgba(201,154,122,.3);padding:7px 14px;border-radius:30px}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+/* tabs */
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;background:none;border:none;color:var(--dim);font-family:'Inter';font-size:.82rem;font-weight:600;padding:14px 20px;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;letter-spacing:.01em}
+.tab:hover{color:var(--txt)}
+.tab.active{color:var(--accent-l);border-bottom-color:var(--accent)}
+.tab .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:middle}
+.tab small{display:block;font-size:.58rem;font-weight:500;letter-spacing:.04em;color:var(--dim);margin-top:2px;text-transform:uppercase}
+.view{display:none}
+.view.active{display:block;animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+section{padding:48px 0;border-bottom:1px solid var(--line)}
+.sec-label{font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:400;margin-bottom:6px}
+.sec-title em{font-style:italic;color:var(--accent-l)}
+.sec-note{font-size:.82rem;color:var(--dim);margin-bottom:28px;max-width:760px;line-height:1.6}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:8px}
+.kpi-grid.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.kpi-grid,.kpi-grid.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.kpi-grid,.kpi-grid.g4{grid-template-columns:1fr}}
+.kpi{background:linear-gradient(160deg,var(--bg-2),var(--bg-3));border:1px solid var(--line);border-radius:14px;padding:22px 20px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.kpi-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:600;color:#fff;line-height:1;letter-spacing:-.01em}
+.kpi-lbl{font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-top:10px}
+.kpi-sub{font-size:.72rem;color:var(--accent-l);margin-top:8px}
+.kpi.feat{background:linear-gradient(160deg,#1a120d,#241612);border-color:rgba(201,154,122,.3)}
+.kpi.bad::before{background:linear-gradient(90deg,var(--red),transparent)}
+.kpi.bad .kpi-sub{color:var(--red)}
+.kpi.good::before{background:linear-gradient(90deg,var(--green),transparent)}
+.kpi.good .kpi-sub{color:var(--green)}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+.grid2b{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:880px){.grid2,.grid2b{grid-template-columns:1fr}}
+.card{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:26px}
+.card-h{font-size:.95rem;font-weight:600;margin-bottom:4px}
+.card-sub{font-size:.74rem;color:var(--dim);margin-bottom:18px}
+.chart-box{position:relative;height:300px}
+.chart-box.sm{height:260px}
+.insight{background:linear-gradient(135deg,rgba(224,178,92,.06),rgba(201,154,122,.04));border:1px solid rgba(224,178,92,.25);border-radius:12px;padding:18px 22px;margin-top:18px;display:flex;gap:14px;align-items:flex-start}
+.insight.blue{background:linear-gradient(135deg,rgba(127,168,201,.07),rgba(127,168,201,.03));border-color:rgba(127,168,201,.28)}
+.insight.green{background:linear-gradient(135deg,rgba(122,184,154,.08),rgba(122,184,154,.03));border-color:rgba(122,184,154,.28)}
+.insight.red{background:linear-gradient(135deg,rgba(232,115,106,.08),rgba(232,115,106,.02));border-color:rgba(232,115,106,.3)}
+.insight .ic{font-size:1.1rem;margin-top:1px}
+.insight-txt{font-size:.84rem;line-height:1.6;color:#e4dcd3}
+.insight-txt b{color:var(--amber)}
+.insight.blue .insight-txt b{color:var(--blue)}
+.insight.green .insight-txt b{color:var(--green)}
+.insight.red .insight-txt b{color:var(--red)}
+.alert-block{background:linear-gradient(135deg,rgba(232,115,106,.08),rgba(232,115,106,.02));border:1px solid rgba(232,115,106,.3);border-radius:16px;padding:32px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
+@media(max-width:760px){.alert-block{grid-template-columns:1fr}}
+.alert-big{font-family:'Playfair Display',serif;font-size:3.2rem;font-weight:700;color:var(--red);line-height:1}
+.alert-big small{display:block;font-size:.7rem;font-family:'Inter';letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-top:8px;font-weight:500}
+.rank{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.rank-row{display:grid;grid-template-columns:24px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.rank-row:last-child{border:none}
+.rank-pos{font-family:'Playfair Display',serif;color:var(--accent);font-size:1rem;text-align:center}
+.rank-name{font-size:.86rem;font-weight:500}
+.rank-bar-wrap{height:5px;background:var(--bg-3);border-radius:3px;margin-top:6px;overflow:hidden}
+.rank-bar{height:100%;background:linear-gradient(90deg,var(--accent-d,#8B6952),var(--accent));border-radius:3px}
+.rank-val{text-align:right}
+.rank-val b{font-size:.88rem;color:#fff}
+.rank-val span{display:block;font-size:.66rem;color:var(--dim);margin-top:2px}
+.gap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+@media(max-width:680px){.gap-grid{grid-template-columns:1fr}}
+.gap-card{text-align:center;background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:26px 18px}
+.gap-num{font-family:'Playfair Display',serif;font-size:2.3rem;font-weight:600}
+.gap-num.bad{color:var(--red)}
+.gap-num.ok{color:var(--accent-l)}
+.gap-num.good{color:var(--green)}
+.gap-lbl{font-size:.72rem;color:var(--dim);margin-top:8px;line-height:1.5}
+.discover{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:8px}
+@media(max-width:760px){.discover{grid-template-columns:1fr}}
+.disc{background:var(--bg-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:20px 22px}
+.disc.bad{border-left-color:var(--red)}
+.disc.good{border-left-color:var(--green)}
+.disc-k{font-size:1.5rem;font-family:'Playfair Display',serif;color:var(--accent-l);font-weight:600}
+.disc.bad .disc-k{color:var(--red)}
+.disc.good .disc-k{color:var(--green)}
+.disc-t{font-size:.86rem;font-weight:600;margin:6px 0 4px}
+.disc-d{font-size:.78rem;color:var(--dim);line-height:1.55}
+/* comparison table */
+.cmp{margin-top:8px;border:1px solid var(--line);border-radius:14px;overflow:hidden;overflow-x:auto}
+.cmp table{width:100%;border-collapse:collapse;min-width:680px}
+.cmp th,.cmp td{padding:14px 16px;text-align:left;font-size:.82rem;border-bottom:1px solid var(--line)}
+.cmp thead th{background:var(--bg-3);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:600}
+.cmp tbody tr:last-child td{border-bottom:none}
+.cmp .rh{font-weight:600;color:var(--dim);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em}
+.cmp .store-h{font-family:'Playfair Display',serif;font-size:1rem;color:#fff}
+.cmp .store-h small{display:block;font-family:'Inter';font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-top:3px;font-weight:500}
+.cmp td b{color:#fff}
+.cmp .pos{color:var(--green)}
+.cmp .neg{color:var(--red)}
+.cdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
+/* store hero */
+.shero{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:6px}
+.shero-badge{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:6px 14px;border-radius:30px;border:1px solid var(--accent);color:var(--accent-l)}
+.pn-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+@media(max-width:760px){.pn-grid{grid-template-columns:1fr}}
+.pn{border-radius:14px;padding:24px;border:1px solid var(--line)}
+.pn.pos{background:linear-gradient(160deg,rgba(122,184,154,.06),rgba(122,184,154,.02));border-color:rgba(122,184,154,.25)}
+.pn.neg{background:linear-gradient(160deg,rgba(232,115,106,.06),rgba(232,115,106,.02));border-color:rgba(232,115,106,.25)}
+.pn-h{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px;font-weight:600}
+.pn.pos .pn-h{color:var(--green)}
+.pn.neg .pn-h{color:var(--red)}
+.pn ul{list-style:none}
+.pn li{font-size:.84rem;line-height:1.5;padding:9px 0 9px 26px;position:relative;border-bottom:1px solid rgba(255,255,255,.04);color:#e4dcd3}
+.pn li:last-child{border:none}
+.pn li::before{position:absolute;left:0;top:8px;font-size:.9rem}
+.pn.pos li::before{content:'▲';color:var(--green);font-size:.65rem;top:11px}
+.pn.neg li::before{content:'▼';color:var(--red);font-size:.65rem;top:11px}
+.pn li b{color:#fff}
+.foot-cap{font-size:.72rem;color:var(--dim);line-height:1.6;margin-top:18px;padding:16px 18px;background:var(--bg-2);border:1px dashed var(--line);border-radius:10px;font-style:italic}
+footer{padding:40px 0 60px;text-align:center}
+.foot-brand{font-family:'Playfair Display',serif;color:var(--rose);letter-spacing:.2em;font-size:.85rem}
+.foot-note{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:#5a4f48;margin-top:10px}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.vis{opacity:1;transform:none}
+.auto-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:8px}
+@media(max-width:760px){.auto-flow{grid-template-columns:1fr}}
+.auto-step{background:var(--bg-2);border:1px solid var(--line);padding:24px 20px;position:relative}
+.auto-step:not(:last-child)::after{content:'→';position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--rose);z-index:2;background:var(--bg);padding:2px}
+@media(max-width:760px){.auto-step:not(:last-child)::after{content:'↓';right:50%;top:auto;bottom:-9px;transform:translateX(50%)}}
+.auto-ic{font-size:1.4rem;margin-bottom:10px}
+.auto-t{font-size:.85rem;font-weight:600;margin-bottom:6px}
+.auto-d{font-size:.74rem;color:var(--dim);line-height:1.5}
+.gmaps{background:linear-gradient(135deg,rgba(127,168,201,.07),rgba(122,184,154,.04));border:1px solid rgba(127,168,201,.28);border-radius:18px;padding:38px;margin-top:8px}
+.gmaps-top{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+@media(max-width:760px){.gmaps-top{grid-template-columns:1fr 1fr}}
+.gm-val{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;line-height:1}
+.gm-val.blue{color:var(--blue)}.gm-val.green{color:var(--green)}.gm-val.dim{color:var(--dim)}
+.gm-lbl{font-size:.68rem;color:var(--dim);margin-top:8px;letter-spacing:.04em;line-height:1.4}
+.gm-stars{color:var(--amber);font-size:1.3rem;letter-spacing:2px}
+.gmaps-foot{font-size:.72rem;color:var(--dim);margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.07);line-height:1.6;font-style:italic}
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+@media(max-width:760px){.proj-grid{grid-template-columns:1fr}}
+.proj-card{background:linear-gradient(160deg,#13110f,#1c1713);border:1px solid var(--line);border-radius:14px;padding:30px 26px;text-align:center}
+.proj-val{font-family:'Playfair Display',serif;font-size:2.3rem;font-weight:700;color:var(--accent-l);line-height:1}
+.proj-lbl{font-size:.74rem;color:var(--dim);margin-top:10px;line-height:1.5}
+/* ---- móvil: ajuste fino para celular ---- */
+@media(max-width:600px){
+  .wrap{padding:0 16px}
+  header{padding-top:16px}
+  .head-row{padding-bottom:16px;gap:10px}
+  .head-logo{height:32px}
+  .head-title{font-size:.95rem}
+  .head-badge{font-size:.52rem;padding:5px 10px;letter-spacing:.12em}
+  .tab{padding:11px 14px;font-size:.78rem}
+  .tab small{font-size:.54rem}
+  section{padding:34px 0}
+  .sec-title{font-size:1.32rem;line-height:1.25}
+  .sec-note{font-size:.8rem;margin-bottom:22px}
+  .kpi{padding:18px 16px}
+  .kpi-val{font-size:1.5rem}
+  .card{padding:20px 16px}
+  .gmaps{padding:24px 18px}
+  .alert-block{padding:24px 18px}
+  .alert-big{font-size:2.4rem}
+  .chart-box{height:270px}
+  .chart-box.sm{height:240px}
+  .gap-num{font-size:1.9rem}
+  .disc-k{font-size:1.3rem}
+  .insight{padding:15px 16px;gap:11px}
+  .insight-txt{font-size:.8rem}
+}
+@media(max-width:400px){
+  .sec-title{font-size:1.18rem}
+  .kpi-val{font-size:1.35rem}
+  .tab{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="head-row">
+      <div style="display:flex;align-items:center;gap:18px">
+        <img src="img/logo-blanco.svg" class="head-logo" alt="Bianca Aldama"/>
+        <div>
+          <div class="head-title">Tablero de Negocio</div>
+          <div class="head-sub">3 Sucursales · Consolidado</div>
+        </div>
+      </div>
+      <div class="head-badge"><span class="live-dot"></span>Datos reales extraídos del POS · Jun 2026</div>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-view="consolidado" style="--accent:#C99A7A;--accent-l:#E8C9B0">
+        <span class="dot" style="background:linear-gradient(90deg,#7FA8C9,#C99A7A,#E0B25C)"></span>Consolidado<small>Las 3 tiendas</small></button>
+      <button class="tab" data-view="avila" style="--accent:#C99A7A;--accent-l:#E8C9B0">
+        <span class="dot" style="background:#C99A7A"></span>Avila Camacho<small>Boutique · ropa</small></button>
+      <button class="tab" data-view="consti" style="--accent:#7FA8C9;--accent-l:#A9CBE2">
+        <span class="dot" style="background:#7FA8C9"></span>Constitución<small>Boutique · ropa</small></button>
+      <button class="tab" data-view="zapateria" style="--accent:#E0B25C;--accent-l:#EBCB8B">
+        <span class="dot" style="background:#E0B25C"></span>Zapatería<small>Calzado</small></button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ CONSOLIDADO ============================ -->
+<div class="view active" id="view-consolidado">
+<section style="border-bottom:none;padding-bottom:26px">
+  <div class="wrap">
+    <p class="sec-label reveal">Visión de grupo</p>
+    <h2 class="sec-title reveal">Tres tiendas, <em>una sola verdad.</em></h2>
+    <p class="sec-note reveal">Por primera vez, las 3 sucursales en un solo lugar. Hoy cada una vive en una computadora aislada; en la nube serán este tablero, en vivo. <b style="color:var(--rose-l)">Nota:</b> cada tienda tiene un sistema y un periodo de datos distinto — abajo se comparan de forma justa (promedio mensual), no por totales crudos.</p>
+    <div class="kpi-grid g4">
+      <div class="kpi feat reveal"><div class="kpi-val" data-cur="5727133">$0</div><div class="kpi-lbl">Inventario combinado</div><div class="kpi-sub">3,672 SKUs en las 3</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-num="2799">0</div><div class="kpi-lbl">Clientas en sistema</div><div class="kpi-sub">base reactivable</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-num="8564">0</div><div class="kpi-lbl">Tickets capturados</div><div class="kpi-sub">histórico de las 3</div></div>
+      <div class="kpi bad reveal"><div class="kpi-val" data-cur="2354079">$0</div><div class="kpi-lbl">Capital inmovilizado</div><div class="kpi-sub">stock muerto (Avila)</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid2b">
+      <div class="card reveal">
+        <div class="card-h">Tamaño real por tienda</div>
+        <div class="card-sub">Venta mensual promedio — comparación justa entre periodos distintos</div>
+        <div class="chart-box"><canvas id="cCmpAvg"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">Captura de la clienta (CRM)</div>
+        <div class="card-sub">% de clientas con teléfono — el motor del retargeting</div>
+        <div class="chart-box"><canvas id="cCmpCrm"></canvas></div>
+      </div>
+    </div>
+    <div class="insight red reveal">
+      <div class="ic">📵</div>
+      <div class="insight-txt"><b>El gran hallazgo cruzado (y a corregir):</b> al validar un número real de 10 dígitos, <b>ninguna boutique captura el teléfono de su clienta</b>. Constitución tiene apenas <b>12 válidos de 1,552</b> (el sistema llena el campo con basura) y Avila <b>14 de 937</b>. La única con CRM usable es <b>Zapatería: 195 de 310 (62%)</b>. Ese 62% es el estándar a replicar — y en la nube la captura de un teléfono válido se vuelve <b>obligatoria desde la primera venta</b>.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-label reveal">Comparativa</p>
+    <h2 class="sec-title reveal">Lo bueno y lo malo, <em>tienda por tienda.</em></h2>
+    <p class="sec-note reveal">Una radiografía honesta de cada sucursal con sus propios datos. Verde = fortaleza; rojo = foco de mejora.</p>
+    <div class="cmp reveal">
+      <table>
+        <thead>
+          <tr>
+            <th>Indicador</th>
+            <th><span class="cdot" style="background:#C99A7A"></span><span class="store-h">Avila Camacho<small>Boutique · Excel POS</small></span></th>
+            <th><span class="cdot" style="background:#7FA8C9"></span><span class="store-h">Constitución<small>Boutique · .NET POS</small></span></th>
+            <th><span class="cdot" style="background:#E0B25C"></span><span class="store-h">Zapatería<small>Calzado · Excel POS</small></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="rh">Periodo de datos</td><td>Feb–Jun 2026<br><span style="color:var(--dim);font-size:.74rem">5 meses</span></td><td>Ene 2023–Jun 2026<br><span style="color:var(--dim);font-size:.74rem">3.5 años</span></td><td>Jul 2025–Jun 2026<br><span style="color:var(--dim);font-size:.74rem">12 meses</span></td></tr>
+          <tr><td class="rh">Venta del periodo</td><td><b>$2.99M</b></td><td><b>$7.63M</b></td><td><b>$1.81M</b></td></tr>
+          <tr><td class="rh">Venta mensual prom.</td><td class="pos"><b>$598K</b> ★</td><td>$186K</td><td>$151K</td></tr>
+          <tr><td class="rh">Ticket promedio</td><td class="pos"><b>$1,700</b></td><td>$1,495</td><td>$1,065</td></tr>
+          <tr><td class="rh">Tickets</td><td>1,758</td><td class="pos"><b>5,103</b></td><td>1,703</td></tr>
+          <tr><td class="rh">Clientas registradas</td><td>937</td><td class="pos"><b>1,552</b></td><td>310</td></tr>
+          <tr><td class="rh">Captura de teléfono (válido)</td><td class="neg">1.5% ▼</td><td class="neg">~1% ▼</td><td class="pos"><b>62%</b> ★</td></tr>
+          <tr><td class="rh">Inventario valorizado</td><td>$3.67M</td><td class="pos">$524K (ágil)</td><td>$1.53M</td></tr>
+          <tr><td class="rh">Stock muerto</td><td class="neg"><b>$2.35M (64%)</b> ▼</td><td style="color:var(--dim)">sin análisis*</td><td style="color:var(--dim)">sin análisis*</td></tr>
+          <tr><td class="rh">Descuentos</td><td class="neg">Bloqueados ▼</td><td class="pos">Sí (256 ventas) ▲</td><td class="neg">Bloqueados ▼</td></tr>
+          <tr><td class="rh">Apartados</td><td>185 · 167 pend.</td><td>3,261 · $41K saldo</td><td>23 · 17 pend.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="foot-cap reveal">* El análisis de "stock muerto" (mercancía nunca vendida) solo se calculó para Avila, cuyo POS guarda fecha de última venta por SKU. Para Constitución y Zapatería se hará al unificar en la nube. ★ = mejor de las tres en ese indicador.</div>
+  </div>
+</section>
+
+<section style="border-bottom:none">
+  <div class="wrap">
+    <p class="sec-label reveal">Lo que la nube resuelve</p>
+    <h2 class="sec-title reveal">De 3 islas aisladas <em>a un solo cerebro.</em></h2>
+    <div class="discover">
+      <div class="disc good reveal"><div class="disc-k">62% → 3</div><div class="disc-t">CRM unificado</div><div class="disc-d">Solo Zapatería captura teléfono usable (62%). Ese hábito, obligatorio en las 3 → una sola base de WhatsApp/email marketing.</div></div>
+      <div class="disc bad reveal"><div class="disc-k">$2.35M+</div><div class="disc-t">Capital a liberar</div><div class="disc-d">Stock muerto detectado solo en Avila. Al medir las 3, la cifra real de dinero dormido será mayor.</div></div>
+      <div class="disc reveal"><div class="disc-k">3 sistemas</div><div class="disc-t">Una sola verdad</div><div class="disc-d">Excel (Avila/Zapatería) + .NET (Constitución) se consolidan en un esquema en la nube, sin tocar la operación diaria.</div></div>
+      <div class="disc good reveal"><div class="disc-k">~$11M/año</div><div class="disc-t">Negocio en piso</div><div class="disc-d">Sumando el ritmo mensual de las 3 (~$935K/mes), el grupo factura a un orden de ~$11M/año — base sobre la que el ecommerce amplifica.</div></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ============================ AVILA ============================ -->
+<div class="view" id="view-avila" style="--accent:#C99A7A;--accent-l:#E8C9B0;--accent-d:#8B6952">
+<section style="border-bottom:none;padding-bottom:22px">
+  <div class="wrap">
+    <div class="shero reveal"><span class="shero-badge">Boutique · Ropa</span><span style="color:var(--dim);font-size:.78rem">Feb – Jun 2026 · Excel POS + MySQL local</span></div>
+    <h2 class="sec-title reveal">Avila Camacho — <em>la flagship de ropa.</em></h2>
+    <p class="sec-note reveal">La sucursal de mayor venta mensual del grupo. Datos reales del POS Excel.</p>
+    <div class="kpi-grid">
+      <div class="kpi feat reveal"><div class="kpi-val" data-cur="2987992">$0</div><div class="kpi-lbl">Ingreso (5 meses)</div><div class="kpi-sub">~$598K / mes</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-num="1758">0</div><div class="kpi-lbl">Tickets de venta</div><div class="kpi-sub">2,351 piezas</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-cur="1700">$0</div><div class="kpi-lbl">Ticket promedio</div><div class="kpi-sub">1.34 piezas/ticket</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-cur="3673073">$0</div><div class="kpi-lbl">Valor del inventario</div><div class="kpi-sub">2,684 SKUs</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-cur="22985">$0</div><div class="kpi-lbl">Venta diaria prom.</div><div class="kpi-sub">130 días operados</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="pn-grid reveal">
+      <div class="pn pos"><div class="pn-h">▲ Fortalezas</div><ul>
+        <li><b>$598K/mes</b> — la tienda más fuerte del grupo en venta mensual.</li>
+        <li>Ticket promedio alto: <b>$1,700</b>.</li>
+        <li><b>Nora y Vanezza</b> generan el 66% de la venta — equipo con talento medible.</li>
+        <li>Mezcla de producto sana: sets y vestidos lideran.</li>
+      </ul></div>
+      <div class="pn neg"><div class="pn-h">▼ Focos de mejora</div><ul>
+        <li><b>$2.35M (64%)</b> del inventario es stock muerto sin rotación.</li>
+        <li>Solo <b>1.6%</b> de las clientas con teléfono — retargeting casi imposible.</li>
+        <li>Descuentos bloqueados por el POS: solo $370 en 5 meses.</li>
+        <li><b>167 apartados</b> sin liquidar y sin recordatorio automático.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid2">
+      <div class="card reveal">
+        <div class="card-h">Tendencia de ingresos</div>
+        <div class="card-sub">Ingreso mensual · Junio es parcial (mes en curso)</div>
+        <div class="chart-box"><canvas id="aMonth"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">¿Cómo te pagan?</div>
+        <div class="card-sub">Mezcla por método de pago (ingreso)</div>
+        <div class="chart-box sm"><canvas id="aPay"></canvas></div>
+      </div>
+    </div>
+    <div class="insight reveal">
+      <div class="ic">💳</div>
+      <div class="insight-txt"><b>KPI que no veías:</b> el <b>81% de los tickets se cobran por transferencia</b> ($2.31M) y solo el 13% con tarjeta. Vale la pena revisar comisiones y registro de cada peso.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-label reveal">El hallazgo más caro</p>
+    <h2 class="sec-title reveal">Stock muerto: <em>dinero dormido en bodega.</em></h2>
+    <p class="sec-note reveal">Mercancía con existencia que <b style="color:var(--red)">nunca se ha vendido</b> en todo el periodo.</p>
+    <div class="alert-block reveal">
+      <div class="alert-big" data-cur="2354079">$0<small>Inventario sin rotación</small></div>
+      <div>
+        <div style="font-size:.9rem;color:#e4dcd3;line-height:1.65;margin-bottom:16px">
+          <b style="color:var(--red)">908 SKUs</b> (el <b style="color:var(--red)">64% del valor del inventario</b>) están parados. Marcas con más stock dormido:
+        </div>
+        <div class="chart-box sm" style="height:200px"><canvas id="aDead"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid2b">
+      <div class="card reveal">
+        <div class="card-h">Productos estrella</div>
+        <div class="card-sub">Top 10 por ingreso generado</div>
+        <div class="chart-box" style="height:340px"><canvas id="aProd"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">Ranking de vendedoras</div>
+        <div class="card-sub">Ingreso y ticket promedio por persona</div>
+        <div class="rank" id="aRankVend"></div>
+      </div>
+    </div>
+    <div class="insight reveal">
+      <div class="ic">🏆</div>
+      <div class="insight-txt"><b>Insight de equipo:</b> <b>Nora y Vanezza</b> generan el <b>66% de toda la venta</b>. Vanezza tiene el ticket promedio más alto ($1,801).</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid2b">
+      <div class="card reveal">
+        <div class="card-h">Por día de la semana</div>
+        <div class="card-sub">Ingreso acumulado del periodo</div>
+        <div class="chart-box sm"><canvas id="aDow"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">Por hora del día</div>
+        <div class="card-sub">Cuándo entra el dinero</div>
+        <div class="chart-box sm"><canvas id="aHour"></canvas></div>
+      </div>
+    </div>
+    <div class="insight reveal">
+      <div class="ic">📅</div>
+      <div class="insight-txt"><b>Operación:</b> el <b>sábado</b> es el día rey ($611K) y el pico es de <b>12 a 4 PM</b>.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="sec-label reveal" style="color:var(--red)">Foco rojo</p>
+    <h2 class="sec-title reveal">937 clientas… <em>e imposible volver a alcanzarlas.</em></h2>
+    <p class="sec-note reveal">Sin teléfono ni correo no hay <b style="color:var(--red)">retargeting</b>. Zapatería es la mejor referencia del grupo (62% de captura) — Avila es el caso más urgente a corregir.</p>
+    <div class="gap-grid">
+      <div class="gap-card reveal"><div class="gap-num ok" data-num="937">0</div><div class="gap-lbl">Clientas que ya<br>te compraron</div></div>
+      <div class="gap-card reveal"><div class="gap-num bad" data-num="15">0</div><div class="gap-lbl">Con teléfono<br>(solo 1.6%)</div></div>
+      <div class="gap-card reveal"><div class="gap-num bad" data-num="0">0</div><div class="gap-lbl">Con email<br>(cero email marketing)</div></div>
+    </div>
+    <div class="insight reveal">
+      <div class="ic">📲</div>
+      <div class="insight-txt"><b>El costo invisible:</b> una base de 937 clientas reactivable, a tu ticket de $1,700, es una mina de cientos de miles de pesos al año en recompra. Hoy ese canal está <b>apagado al 98%</b>.</div>
+    </div>
+  </div>
+</section>
+
+<section style="border-bottom:none">
+  <div class="wrap">
+    <p class="sec-label reveal">Apartados</p>
+    <h2 class="sec-title reveal">$317K apartados — <em>y 167 sin liquidar.</em></h2>
+    <div class="gap-grid reveal">
+      <div class="gap-card"><div class="gap-num ok" data-cur="317143">$0</div><div class="gap-lbl">Valor total<br>en apartados</div></div>
+      <div class="gap-card"><div class="gap-num bad" data-num="167">0</div><div class="gap-lbl">Apartados<br>pendientes de liquidar</div></div>
+      <div class="gap-card"><div class="gap-num ok" data-num="185">0</div><div class="gap-lbl">Apartados totales<br>en el periodo</div></div>
+    </div>
+    <div style="margin-top:30px" class="reveal">
+      <div class="card-h" style="margin-bottom:4px">🤖 Automatización propuesta: recordatorio inteligente de apartados</div>
+      <div class="card-sub" style="margin-bottom:18px">Una vez en la nube, el sistema vigila cada apartado y actúa solo — para las 3 tiendas.</div>
+      <div class="auto-flow">
+        <div class="auto-step"><div class="auto-ic">📝</div><div class="auto-t">Se registra el apartado</div><div class="auto-d">La empleada lo captura normal en el POS, con su fecha de vencimiento.</div></div>
+        <div class="auto-step"><div class="auto-ic">⏳</div><div class="auto-t">El sistema cuenta los días</div><div class="auto-d">Vigila en la nube 24/7. Al acercarse el plazo, se dispara solo.</div></div>
+        <div class="auto-step"><div class="auto-ic">📲</div><div class="auto-t">WhatsApp + correo</div><div class="auto-d">"Hola [nombre], tu apartado vence el [fecha] 💛". Sin que nadie lo mande.</div></div>
+        <div class="auto-step"><div class="auto-ic">✅</div><div class="auto-t">Recupera la venta</div><div class="auto-d">Segundo aviso + política de penalización. Menos prendas varadas.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ============================ CONSTITUCIÓN ============================ -->
+<div class="view" id="view-consti" style="--accent:#7FA8C9;--accent-l:#A9CBE2;--accent-d:#4f7d9e">
+<section style="border-bottom:none;padding-bottom:22px">
+  <div class="wrap">
+    <div class="shero reveal"><span class="shero-badge">Boutique · Ropa</span><span style="color:var(--dim);font-size:.78rem">Ene 2023 – Jun 2026 · Sistema .NET + MySQL local</span></div>
+    <h2 class="sec-title reveal">Constitución — <em>la de mayor trayectoria.</em></h2>
+    <p class="sec-note reveal">3.5 años de historia y el mejor CRM del grupo. Corre en un sistema .NET distinto (no Excel), más completo — y también el de mayor dependencia de un solo programador.</p>
+    <div class="kpi-grid">
+      <div class="kpi feat reveal"><div class="kpi-val" data-cur="7629819">$0</div><div class="kpi-lbl">Ingreso histórico</div><div class="kpi-sub">~$186K / mes</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-num="5103">0</div><div class="kpi-lbl">Tickets de venta</div><div class="kpi-sub">3.5 años</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-cur="1495">$0</div><div class="kpi-lbl">Ticket promedio</div><div class="kpi-sub">sólido</div></div>
+      <div class="kpi bad reveal"><div class="kpi-val" data-num="12">0</div><div class="kpi-lbl">Teléfonos válidos</div><div class="kpi-sub">de 1,552 · campo con basura ▼</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-cur="523588">$0</div><div class="kpi-lbl">Valor del inventario</div><div class="kpi-sub">514 SKUs · ágil</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="pn-grid reveal">
+      <div class="pn pos"><div class="pn-h">▲ Fortalezas</div><ul>
+        <li><b>3.5 años de historia</b> — la única con tendencia de largo plazo para planear temporadas.</li>
+        <li><b>Sí permite descuentos</b> (256 ventas) — sistema más flexible que el Excel.</li>
+        <li>Inventario ágil: solo <b>$524K</b>, 53% en stock → poco capital dormido.</li>
+        <li>Apartados muy sanos: <b>3,261 apartados</b> con apenas <b>$41K</b> de saldo pendiente.</li>
+      </ul></div>
+      <div class="pn neg"><div class="pn-h">▼ Focos de mejora</div><ul>
+        <li><b>CRM aparente, no real:</b> el campo "teléfono" está lleno en 1,552 clientas pero solo <b>12 tienen número válido</b> — el resto es basura. No sirve para WhatsApp hasta limpiar y recapturar.</li>
+        <li><b>Datos de pago dudosos:</b> 92% marcado "tarjeta" — casi seguro un valor por defecto del sistema, no la mezcla real.</li>
+        <li><b>138 ventas canceladas</b> en el histórico — revisar el porqué.</li>
+        <li>Sistema .NET compilado por un solo programador → <b>riesgo de dependencia</b> (igual que el incidente reciente).</li>
+        <li>Huecos en datos recientes (ene 2026 casi vacío) — validar capturas.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid2">
+      <div class="card reveal">
+        <div class="card-h">Tendencia de ingresos · 3.5 años</div>
+        <div class="card-sub">Ingreso mensual desde 2023 — historia que ninguna otra tienda tiene</div>
+        <div class="chart-box"><canvas id="kMonth"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">Apartados: crédito sano</div>
+        <div class="card-sub">Volumen vs saldo pendiente</div>
+        <div class="rank" id="kApart"></div>
+      </div>
+    </div>
+    <div class="insight blue reveal">
+      <div class="ic">📈</div>
+      <div class="insight-txt"><b>Lectura:</b> Constitución es la tienda <b>más estable y con más historia</b> — promedia ~$186K/mes desde 2023. Ojo: su base de clientas se ve enorme (1,552) pero el teléfono casi siempre es basura — el <b>CRM real hay que reconstruirlo</b>, igual que en las otras.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid2b">
+      <div class="card reveal">
+        <div class="card-h">Por día de la semana</div>
+        <div class="card-sub">Ingreso acumulado histórico</div>
+        <div class="chart-box sm"><canvas id="kDow"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">Marcas con más inventario</div>
+        <div class="card-sub">Valor en piso por marca (top 6)</div>
+        <div class="chart-box sm"><canvas id="kBrands"></canvas></div>
+      </div>
+    </div>
+    <div class="insight blue reveal">
+      <div class="ic">🔎</div>
+      <div class="insight-txt"><b>Calidad de datos:</b> el sistema .NET guarda los productos por <b>código de estilo</b> (ej. "2259T-S"), no por nombre amigable — por eso el reporte por producto es menos legible que en Avila. Al migrar a la nube se normaliza para que todas las tiendas hablen el mismo idioma de catálogo.</div>
+    </div>
+  </div>
+</section>
+
+<section style="border-bottom:none">
+  <div class="wrap">
+    <p class="sec-label reveal" style="color:var(--blue)">El dato a corregir</p>
+    <h2 class="sec-title reveal">Una base de clientas <em>que hay que reconstruir.</em></h2>
+    <p class="sec-note reveal">El sistema .NET llena el campo "teléfono" en todas las clientas, pero al validar un número real de 10 dígitos casi todo es basura. El verdadero activo de Constitución es otro: 3.5 años de historia y una gestión de apartados muy sana. El CRM se reconstruye desde cero en la nube, con captura obligatoria.</p>
+    <div class="gap-grid">
+      <div class="gap-card reveal"><div class="gap-num bad" data-num="12">0</div><div class="gap-lbl">Teléfonos válidos<br>(de 1,552 registros)</div></div>
+      <div class="gap-card reveal"><div class="gap-num good" data-num="42">0</div><div class="gap-lbl">Meses de historia<br>(la más larga del grupo)</div></div>
+      <div class="gap-card reveal"><div class="gap-num ok" data-num="3261">0</div><div class="gap-lbl">Apartados gestionados<br>($41K saldo · sano)</div></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ============================ ZAPATERÍA ============================ -->
+<div class="view" id="view-zapateria" style="--accent:#E0B25C;--accent-l:#EBCB8B;--accent-d:#a07d36">
+<section style="border-bottom:none;padding-bottom:22px">
+  <div class="wrap">
+    <div class="shero reveal"><span class="shero-badge">Calzado</span><span style="color:var(--dim);font-size:.78rem">Jul 2025 – Jun 2026 · Excel POS + MySQL local</span></div>
+    <h2 class="sec-title reveal">Zapatería — <em>el negocio joven.</em></h2>
+    <p class="sec-note reveal">Arrancó en julio 2025. Vende sobre todo en la zona de Constitución. <b style="color:var(--amber)">Dato clave:</b> su base de datos registra ventas con 3 etiquetas de sucursal (Constitución, Avila y "Los Mochis") — abajo el desglose real.</p>
+    <div class="kpi-grid">
+      <div class="kpi feat reveal"><div class="kpi-val" data-cur="1813900">$0</div><div class="kpi-lbl">Ingreso (~12 meses)</div><div class="kpi-sub">~$151K / mes</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-num="1703">0</div><div class="kpi-lbl">Tickets de venta</div><div class="kpi-sub">2,140 pares</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-cur="1065">$0</div><div class="kpi-lbl">Ticket promedio</div><div class="kpi-sub">calzado de dama</div></div>
+      <div class="kpi reveal"><div class="kpi-val" data-cur="1530472">$0</div><div class="kpi-lbl">Valor del inventario</div><div class="kpi-sub">2,474 SKUs</div></div>
+      <div class="kpi good reveal"><div class="kpi-val" data-num="62">0</div><div class="kpi-lbl">% Captura teléfono</div><div class="kpi-sub">195 de 310 · mejor del grupo ★</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="pn-grid reveal">
+      <div class="pn pos"><div class="pn-h">▲ Fortalezas</div><ul>
+        <li>Negocio nuevo con tracción: <b>$1.81M</b> en su primer año.</li>
+        <li><b>62%</b> de captura de teléfono — el mejor CRM del grupo, muy por encima de las boutiques.</li>
+        <li>Mezcla clara: <b>zapatillas y botas</b> son el motor de venta.</li>
+        <li>Jueves y sábado, los días fuertes.</li>
+      </ul></div>
+      <div class="pn neg"><div class="pn-h">▼ Focos de mejora</div><ul>
+        <li><b>89% de la venta</b> se concentra en la sucursal Constitución; la etiqueta Avila apenas $198K.</li>
+        <li><b>"Los Mochis" casi inactiva:</b> solo 6 tickets ($5.9K) — ¿cerró o es tienda fantasma? A confirmar.</li>
+        <li>Mismo bug de descuentos del POS Excel (bloqueados).</li>
+        <li>Inventario solo controlado en Constitución (1,175 SKUs) — Avila/Mochis sin control de stock.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid2">
+      <div class="card reveal">
+        <div class="card-h">Venta por etiqueta de sucursal</div>
+        <div class="card-sub">Dónde ocurre realmente la venta de calzado</div>
+        <div class="chart-box sm"><canvas id="zSuc"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">¿Cómo te pagan?</div>
+        <div class="card-sub">Mezcla por método de pago (ingreso)</div>
+        <div class="chart-box sm"><canvas id="zPay"></canvas></div>
+      </div>
+    </div>
+    <div class="insight reveal">
+      <div class="ic">📍</div>
+      <div class="insight-txt"><b>Realidad operativa:</b> aunque el sistema se llama "Zapatería Consti", la venta de calzado está <b>casi toda en Constitución</b> ($1.61M). La etiqueta "Los Mochis" prácticamente no se usó — conviene confirmar con Bianca si es una sucursal real, una prueba, o una tienda que cerró.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid2b">
+      <div class="card reveal">
+        <div class="card-h">Productos estrella</div>
+        <div class="card-sub">Top por ingreso (sucursal Constitución)</div>
+        <div class="chart-box" style="height:320px"><canvas id="zProd"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">Ranking de vendedoras</div>
+        <div class="card-sub">Sucursal Constitución · ingreso y ticket prom.</div>
+        <div class="rank" id="zRankVend"></div>
+      </div>
+    </div>
+    <div class="insight reveal">
+      <div class="ic">👠</div>
+      <div class="insight-txt"><b>Mezcla de catálogo:</b> <b>zapatillas</b> ($620K) y <b>botas</b> ($401K) son los dos motores. <b>Alondra</b> es la vendedora estrella con el 48% de la venta de la sucursal.</div>
+    </div>
+  </div>
+</section>
+
+<section style="border-bottom:none">
+  <div class="wrap">
+    <div class="grid2b">
+      <div class="card reveal">
+        <div class="card-h">Por día de la semana</div>
+        <div class="card-sub">Ingreso acumulado (Constitución)</div>
+        <div class="chart-box sm"><canvas id="zDow"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">Marcas con más inventario</div>
+        <div class="card-sub">Valor en piso por marca (top 6)</div>
+        <div class="chart-box sm"><canvas id="zBrands"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-brand">Consultora DV</div>
+    <div class="foot-note">Tablero demostrativo · Datos reales de las 3 sucursales · Se actualizará en vivo en la nube</div>
+  </div>
+</footer>
+
+<script>
+/* ===================== DATA ===================== */
+const AVILA = {"rev": 2987992, "tickets": 1758, "units": 2351, "avg_ticket": 1700, "months": [{"label": "Feb", "value": 680328}, {"label": "Mar", "value": 592708}, {"label": "Abr", "value": 582573}, {"label": "May", "value": 691315}, {"label": "Jun", "value": 441068}], "pay": [{"m": "TRANSFERENCIA", "c": 1428, "rev": 2314173}, {"m": "TARJETA", "c": 229, "rev": 480274}, {"m": "EFECTIVO", "c": 98, "rev": 187291}, {"m": "MIXTO", "c": 3, "rev": 6255}], "top_prod": [{"name": "Set", "rev": 372880, "u": 215}, {"name": "Vestido", "rev": 282968, "u": 181}, {"name": "Jeans", "rev": 205371, "u": 155}, {"name": "Jean", "rev": 118862, "u": 119}, {"name": "Blusa", "rev": 101319, "u": 129}, {"name": "Pantalon", "rev": 84590, "u": 71}, {"name": "Palazzo", "rev": 58560, "u": 46}, {"name": "Camisa", "rev": 46434, "u": 53}, {"name": "Top", "rev": 44740, "u": 56}, {"name": "Jacket", "rev": 33150, "u": 23}], "vend": [{"name": "Nora", "rev": 1065124, "tk": 651, "avg": 1636}, {"name": "Vanezza", "rev": 913147, "tk": 507, "avg": 1801}, {"name": "Daniela", "rev": 609294, "tk": 368, "avg": 1656}, {"name": "Miriam", "rev": 202649, "tk": 120, "avg": 1689}, {"name": "Fatima", "rev": 134770, "tk": 73, "avg": 1846}, {"name": "Jessie", "rev": 63008, "tk": 39, "avg": 1616}], "dead_brands": [{"name": "Peekskill", "val": 142400}, {"name": "Mable", "val": 107120}, {"name": "Cello", "val": 94450}, {"name": "Blithe", "val": 93110}, {"name": "Dazzling", "val": 72950}, {"name": "Blithela", "val": 69060}], "dow": [{"d": "Lun", "v": 407327}, {"d": "Mar", "v": 435968}, {"d": "Mié", "v": 487290}, {"d": "Jue", "v": 488052}, {"d": "Vie", "v": 428858}, {"d": "Sáb", "v": 610889}, {"d": "Dom", "v": 129608}], "hours": [{"h": 9, "v": 170718}, {"h": 10, "v": 218081}, {"h": 11, "v": 257500}, {"h": 12, "v": 326211}, {"h": 13, "v": 306876}, {"h": 14, "v": 357519}, {"h": 15, "v": 293629}, {"h": 16, "v": 306647}, {"h": 17, "v": 262180}, {"h": 18, "v": 240527}, {"h": 19, "v": 198944}, {"h": 20, "v": 28900}, {"h": 21, "v": 0}]};
+
+const CONSTI = {"rev": 7629819, "tickets": 5103, "avg_ticket": 1495, "canceladas": 138, "desc_used": 256, "pay": [{"m": "Tarjeta (?)", "rev": 7101275, "c": 4716}, {"m": "Efectivo", "rev": 480288, "c": 362}, {"m": "Mixto", "rev": 48256, "c": 25}], "months": [{"label": "2023-01", "value": 8633}, {"label": "2023-02", "value": 196050}, {"label": "2023-03", "value": 440536}, {"label": "2023-04", "value": 264659}, {"label": "2023-05", "value": 215509}, {"label": "2023-06", "value": 202842}, {"label": "2023-07", "value": 165630}, {"label": "2023-08", "value": 148550}, {"label": "2023-09", "value": 251892}, {"label": "2023-10", "value": 303535}, {"label": "2023-11", "value": 217385}, {"label": "2023-12", "value": 150292}, {"label": "2024-01", "value": 1368}, {"label": "2024-02", "value": 162477}, {"label": "2024-03", "value": 240247}, {"label": "2024-04", "value": 123132}, {"label": "2024-05", "value": 255093}, {"label": "2024-06", "value": 121410}, {"label": "2024-07", "value": 210348}, {"label": "2024-08", "value": 140890}, {"label": "2024-09", "value": 180434}, {"label": "2024-10", "value": 246139}, {"label": "2024-11", "value": 119366}, {"label": "2024-12", "value": 214619}, {"label": "2025-01", "value": 27815}, {"label": "2025-02", "value": 303866}, {"label": "2025-03", "value": 225927}, {"label": "2025-04", "value": 214772}, {"label": "2025-05", "value": 183300}, {"label": "2025-06", "value": 175755}, {"label": "2025-07", "value": 125731}, {"label": "2025-08", "value": 113287}, {"label": "2025-09", "value": 49480}, {"label": "2025-10", "value": 281304}, {"label": "2025-11", "value": 284810}, {"label": "2025-12", "value": 274732}, {"label": "2026-01", "value": 9834}, {"label": "2026-03", "value": 297004}, {"label": "2026-04", "value": 133842}, {"label": "2026-05", "value": 142820}, {"label": "2026-06", "value": 204504}], "dow": [{"d": "Lun", "v": 1107563}, {"d": "Mar", "v": 1001464}, {"d": "Mié", "v": 1315010}, {"d": "Jue", "v": 1189418}, {"d": "Vie", "v": 1434703}, {"d": "Sáb", "v": 1231187}, {"d": "Dom", "v": 350474}], "brands": [{"name": "CELLO", "val": 45540}, {"name": "LUXXEL", "val": 31380}, {"name": "FORE", "val": 28060}, {"name": "LENA", "val": 23300}, {"name": "KLESIS", "val": 22040}, {"name": "BLITHE", "val": 19080}], "ap": {"count": 3261, "saldo": 40659, "abonos": 3414}};
+
+const ZAPB = {"Constitución": {"rev": 1609874, "tickets": 1506, "avg_ticket": 1069, "pay": [{"m": "TRANSFERENCIA", "rev": 730488, "c": 883}, {"m": "TARJETA", "rev": 512366, "c": 592}, {"m": "EFECTIVO", "rev": 347595, "c": 419}, {"m": "MIXTO", "rev": 19424, "c": 20}], "dow": [{"d": "Lun", "v": 171907}, {"d": "Mar", "v": 231848}, {"d": "Mié", "v": 273267}, {"d": "Jue", "v": 315665}, {"d": "Vie", "v": 287664}, {"d": "Sáb", "v": 329523}, {"d": "Dom", "v": 0}], "top_prod": [{"name": "Zapatilla", "rev": 619689, "u": 755}, {"name": "Bota", "rev": 400720, "u": 313}, {"name": "Zapato", "rev": 190140, "u": 271}, {"name": "Sandalia", "rev": 120651, "u": 241}, {"name": "Tenis", "rev": 69265, "u": 78}, {"name": "Botin", "rev": 69251, "u": 63}, {"name": "Mocasin", "rev": 34486, "u": 48}, {"name": "Pantunfla", "rev": 31622, "u": 54}], "vend": [{"name": "Alondra", "rev": 766630, "tk": 709, "avg": 1081}, {"name": "Cristy", "rev": 236393, "tk": 213, "avg": 1110}, {"name": "Jazmín", "rev": 210195, "tk": 181, "avg": 1161}, {"name": "Paloma", "rev": 134605, "tk": 145, "avg": 928}, {"name": "Andrea", "rev": 16396, "tk": 16, "avg": 1025}], "brands": [{"name": "LILIANA", "val": 198375}, {"name": "AZALEA WANG", "val": 150721}, {"name": "BAMBOO", "val": 101094}, {"name": "BENESS", "val": 93911}, {"name": "MIIM", "val": 88670}, {"name": "ANNE MICHELLE", "val": 58909}]}, "Avila Camacho": {"rev": 198101}, "Los Mochis": {"rev": 5925}};
+
+/* ===================== HELPERS ===================== */
+const money = n => '$' + Math.round(n).toLocaleString('es-MX');
+const rose='#C99A7A', roseL='#E8C9B0', roseD='#8B6952', dim='#9B8F86', grid='rgba(255,255,255,.05)';
+const red='#E8736A', blue='#7FA8C9', blueL='#A9CBE2', green='#7AB89A', amber='#E0B25C', amberL='#EBCB8B';
+Chart.defaults.color = dim; Chart.defaults.font.family='Inter'; Chart.defaults.font.size=11;
+
+function countUp(el){
+  if(el._done) return; el._done=true;
+  const cur=el.dataset.cur!==undefined, target=+(el.dataset.cur ?? el.dataset.num);
+  let t0=null,dur=1300;
+  function step(ts){if(!t0)t0=ts;const p=Math.min((ts-t0)/dur,1),e=1-Math.pow(1-p,3);
+    const v=Math.round(target*e);
+    el.childNodes[0].nodeValue = cur? money(v) : v.toLocaleString('es-MX');
+    if(p<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
+function revealIn(root){
+  root.querySelectorAll('.reveal').forEach(el=>{el.classList.add('vis');
+    el.querySelectorAll('[data-num],[data-cur]').forEach(countUp);
+    if(el.matches('[data-num],[data-cur]'))countUp(el);});
+}
+const gold=(c1,c2)=>ctx=>{const c=ctx.chart.ctx,g=c.createLinearGradient(0,0,0,300);
+  g.addColorStop(0,c1);g.addColorStop(1,c2);return g;};
+function rank(el,arr,accent){
+  const maxV=Math.max(...arr.map(v=>v.rev));
+  el.innerHTML=arr.map((v,i)=>`<div class="rank-row">
+    <div class="rank-pos">${i+1}</div>
+    <div><div class="rank-name">${v.name}</div><div class="rank-bar-wrap"><div class="rank-bar" style="width:${Math.round(v.rev/maxV*100)}%;background:linear-gradient(90deg,${accent}66,${accent})"></div></div></div>
+    <div class="rank-val"><b>${money(v.rev)}</b><span>${v.tk} tickets · ${money(v.avg)} prom</span></div>
+  </div>`).join('');
+}
+function barH(id,labels,data,color){ // horizontal bar
+  new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets:[{data,backgroundColor:color+'8c',borderColor:color,borderWidth:1,borderRadius:4}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)}}},scales:{x:{grid:{color:grid},ticks:{callback:v=>'$'+(v/1000)+'K'}},y:{grid:{display:false}}}}});
+}
+function barV(id,labels,data,colors){
+  new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:5}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)}}},scales:{y:{grid:{color:grid},ticks:{callback:v=>'$'+(v/1000)+'K'}},x:{grid:{display:false}}}}});
+}
+function doughnut(id,labels,data,colors){
+  new Chart(document.getElementById(id),{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#141110',borderWidth:3}]},
+    options:{cutout:'62%',plugins:{legend:{position:'bottom',labels:{padding:14,font:{size:10}}},tooltip:{callbacks:{label:c=>c.label+': '+money(c.raw)}}}}});
+}
+function lineC(id,labels,data,color,c1,c2,thin){
+  new Chart(document.getElementById(id),{type:'line',data:{labels,datasets:[{data,borderColor:color,borderWidth:thin?1.8:2.5,backgroundColor:gold(c1,c2),fill:true,tension:.35,pointBackgroundColor:color,pointRadius:thin?0:4,pointHoverRadius:6}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.raw)}}},scales:{y:{grid:{color:grid},ticks:{callback:v=>'$'+(v/1000)+'K'}},x:{grid:{display:false},ticks:{maxTicksLimit:thin?10:12,autoSkip:true}}}}});
+}
+
+/* ===================== TAB LOGIC ===================== */
+const built={};
+function build(view){
+  if(built[view]) return; built[view]=true;
+  if(view==='consolidado'){
+    // monthly average comparison
+    barV('cCmpAvg',['Avila','Constitución','Zapatería'],[597598,186093,151158],[roseL,blueL,amberL]);
+    // CRM capture %
+    new Chart(document.getElementById('cCmpCrm'),{type:'bar',data:{labels:['Avila','Constitución','Zapatería'],datasets:[{data:[1.5,1,62],backgroundColor:[red,red,green],borderRadius:6}]},
+      options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'% con teléfono'}}},scales:{y:{grid:{color:grid},max:100,ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}});
+  }
+  if(view==='avila'){
+    lineC('aMonth',AVILA.months.map(m=>m.label),AVILA.months.map(m=>m.value),rose,'rgba(201,154,122,.5)','rgba(201,154,122,0)');
+    doughnut('aPay',AVILA.pay.map(p=>p.m),AVILA.pay.map(p=>p.rev),[rose,roseD,roseL,'#5a4f48']);
+    barH('aDead',AVILA.dead_brands.map(b=>b.name),AVILA.dead_brands.map(b=>b.val),red);
+    barH('aProd',AVILA.top_prod.map(p=>p.name),AVILA.top_prod.map(p=>p.rev),rose);
+    rank(document.getElementById('aRankVend'),AVILA.vend,rose);
+    barV('aDow',AVILA.dow.map(d=>d.d),AVILA.dow.map(d=>d.v),AVILA.dow.map(d=>d.d==='Sáb'?roseL:rose+'73'));
+    barV('aHour',AVILA.hours.map(h=>h.h+'h'),AVILA.hours.map(h=>h.v),rose+'73');
+  }
+  if(view==='consti'){
+    lineC('kMonth',CONSTI.months.map(m=>m.label),CONSTI.months.map(m=>m.value),blue,'rgba(127,168,201,.45)','rgba(127,168,201,0)',true);
+    document.getElementById('kApart').innerHTML=`
+      <div class="rank-row"><div class="rank-pos">📦</div><div><div class="rank-name">Apartados gestionados</div><div class="rank-bar-wrap"><div class="rank-bar" style="width:100%;background:linear-gradient(90deg,${blue}66,${blue})"></div></div></div><div class="rank-val"><b>3,261</b><span>histórico total</span></div></div>
+      <div class="rank-row"><div class="rank-pos">💵</div><div><div class="rank-name">Abonos registrados</div><div class="rank-bar-wrap"><div class="rank-bar" style="width:100%;background:linear-gradient(90deg,${green}66,${green})"></div></div></div><div class="rank-val"><b>3,414</b><span>pagos parciales</span></div></div>
+      <div class="rank-row"><div class="rank-pos">⚖️</div><div><div class="rank-name">Saldo pendiente</div><div class="rank-bar-wrap"><div class="rank-bar" style="width:6%;background:linear-gradient(90deg,${amber}66,${amber})"></div></div></div><div class="rank-val"><b>$40,659</b><span>muy sano (1.3% del flujo)</span></div></div>
+      <div class="rank-row"><div class="rank-pos">🎟️</div><div><div class="rank-name">Ventas con descuento</div><div class="rank-bar-wrap"><div class="rank-bar" style="width:30%;background:linear-gradient(90deg,${blue}66,${blue})"></div></div></div><div class="rank-val"><b>256</b><span>sí permite descuentos</span></div></div>`;
+    barV('kDow',CONSTI.dow.map(d=>d.d),CONSTI.dow.map(d=>d.v),CONSTI.dow.map(d=>d.d==='Vie'?blueL:blue+'73'));
+    barH('kBrands',CONSTI.brands.map(b=>b.name),CONSTI.brands.map(b=>b.val),blue);
+  }
+  if(view==='zapateria'){
+    const Z=ZAPB['Constitución'];
+    barH('zSuc',['Constitución','Avila Camacho','Los Mochis'],[ZAPB['Constitución'].rev,ZAPB['Avila Camacho'].rev,ZAPB['Los Mochis'].rev],amber);
+    doughnut('zPay',Z.pay.map(p=>p.m),Z.pay.map(p=>p.rev),[amber,amberL,roseD,'#5a4f48']);
+    barH('zProd',Z.top_prod.map(p=>p.name),Z.top_prod.map(p=>p.rev),amber);
+    rank(document.getElementById('zRankVend'),Z.vend,amber);
+    barV('zDow',Z.dow.map(d=>d.d),Z.dow.map(d=>d.v),Z.dow.map(d=>d.d==='Jue'?amberL:amber+'73'));
+    barH('zBrands',Z.brands.map(b=>b.name),Z.brands.map(b=>b.val),amber);
+  }
+}
+function activate(view){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===view));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+view));
+  const root=document.getElementById('view-'+view);
+  build(view);
+  requestAnimationFrame(()=>revealIn(root));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('tabs').addEventListener('click',e=>{
+  const b=e.target.closest('.tab'); if(b) activate(b.dataset.view);
+});
+/* init default */
+activate('consolidado');
+</script>
+</body>
+</html>
